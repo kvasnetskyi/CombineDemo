@@ -40,13 +40,13 @@ Input - the data it receives.<br/>
 Failure - the error it receives.
 
 Also, Subscriber has three methods, which will be called by the publisher:
-* ```receive(subscription: Subscription)```
+* ```receive(subscription: Subscription)```<br/>
 Called when the publisher registered the subscriber.
 
-* ```receive(_ input: Input) -> Subscribers.Demand```
+* ```receive(_ input: Input) -> Subscribers.Demand```<br/>
 Called when the publisher sends data to the subscriber, and returns to the publisher the maximum amount of data the subscriber can still receive.
 
-* ```receive(completion: Subscribers.Completion<Failure>)```
+* ```receive(completion: Subscribers.Completion<Failure>)```<br/>
 Called when the publisher wants to pass the completion to the subscriber.
 
 # The Pattern
