@@ -2,39 +2,37 @@
 **Combine** – unified declarative framework for handling values over time.
 
 You can find more information in a [presentation](https://drive.google.com/file/d/1blu_qidrbC74edCBHP-eM7IvBEfeCwnH/view?usp=sharing) and video:
-- [Theory](https://web.microsoftstream.com/video/31d5bdb6-42de-4643-8524-6e8bc2802afa)
-- [Practise](https://web.microsoftstream.com/video/31d5bdb6-42de-4643-8524-6e8bc2802afa)
+- [Theory](https://chiswdevelopment.sharepoint.com/sites/iOSteam/Shared%20Documents/General/Recordings/Meeting%20in%20_General_-20210616_110923-Meeting%20Recording.mp4?web=1)
+- [Practise](https://chiswdevelopment.sharepoint.com/:v:/r/sites/iOSteam/Shared%20Documents/General/Recordings/Meeting%20in%20_General_-20210616_110923-Meeting%20Recording.mp4?csf=1&web=1&e=JyTsik)
 
 # Components
-[Publisher](#publisher)
-Describes how values and errors are created. Registers the subscriber.
+[Publisher](#publisher) – describes how values and errors are created. Registers the subscriber.
 
-[Subscriber](#subscriber)
-Signed to the publisher to respond to values received or to a completion event.
+[Subscriber](#subscriber) – signed to the publisher to respond to values received or to a completion event.
 
-[Operator](#operator)
-A publisher method that returns either the same or a converted new publisher.
+[Operator](#operators) – a publisher method that returns either the same or a converted new publisher.
 
 # Publisher
 ###### Value Type
 The publisher issues values to one or more subscribers. The values can be of three types:
-
-For proper operation, you need to link the application and the web server:
 * Output
 * Successful Completion
 * Failure Completion
 
 The publisher may output zero or more output values. But if it ever completes, either successfully or with an error, it will not produce any other events.
+
 ![PublisherProtocol](https://user-images.githubusercontent.com/67891065/122563364-c9ffab80-d04c-11eb-8214-670533566c9b.png)
+
 The publisher protocol contains two associated types:
 Output - the value it will produce.
 Failure - the error it may terminate with.
 
-There is also a ```Rubysubscribe``` method inside which a subscriber is passed, whose Input and Error values must match those of the publisher. This method registers the subscriber.
+There is also a ```subscribe``` method inside which a subscriber is passed, whose Input and Error values must match those of the publisher. This method registers the subscriber.
 
 # Subscriber
 ###### Reference Type
 A protocol that declares a type that can receive input from a publisher.
+
 ![SubscriberProtocol](https://user-images.githubusercontent.com/67891065/122563922-75106500-d04d-11eb-8f5e-39343eff2a86.png)
 
 The subscriber protocol contains two types:
@@ -42,13 +40,13 @@ Input - the data it receives.
 Failure - the error it receives.
 
 Also, Subscriber has three methods, which will be called by the publisher:
-* ```Rubyreceive(subscription: Subscription)```
+* ```receive(subscription: Subscription)```
 Called when the publisher registered the subscriber.
 
-* ```Rubyreceive(_ input: Input) -> Subscribers.Demand```
+* ```receive(_ input: Input) -> Subscribers.Demand```
 Called when the publisher sends data to the subscriber, and returns to the publisher the maximum amount of data the subscriber can still receive.
 
-* ```Rubyreceive(completion: Subscribers.Completion<Failure>)```
+* ```receive(completion: Subscribers.Completion<Failure>)```
 Called when the publisher wants to pass the completion to the subscriber.
 
 # The Pattern
@@ -65,20 +63,24 @@ The framework has ready-made publishers, designed to be easy to use. We'll look 
 
 **Future**
 A publisher who eventually produces one value and then completes or fails.
+
 ![Future](https://user-images.githubusercontent.com/67891065/122570457-7002e400-d054-11eb-8fae-eba54dfa7b80.png)
 
 **Deferred**
 A publisher who waits for a subscription before launching a provided closure to create a publisher for a new subscriber.
 
 In practice, it is very often used in conjunction with Future. If you wrap Future in Deferred, a new Future will be created with each new subscription, and produce a new result.
+
 ![Deferred](https://user-images.githubusercontent.com/67891065/122570492-798c4c00-d054-11eb-997c-56046664ebaa.png)
 
 **Just**
 A publisher that sends the output to each subscriber only once and then completes the job.
+
 ![Just](https://user-images.githubusercontent.com/67891065/122570587-8dd04900-d054-11eb-9e5f-aaa4126da779.png)
 
 **Fail**
 Publisher, which terminates immediately with the specified error.
+
 ![Fail](https://user-images.githubusercontent.com/67891065/122570636-96c11a80-d054-11eb-9d3d-db49786c4481.png)
 
 # Foundation Publishers
@@ -95,7 +97,7 @@ Publishers that enable outside callers to send multiple values asynchronously to
 
 These are most often used to connect Combine with imperative code. For example, when you have a delegate method and you want to create a publisher that will publish some data, exactly at the moment when this method is called.
 
-Subjects have a ```Rubysend``` method that you can use to send the data you want, a completion or an error.
+Subjects have a ```send``` method that you can use to send the data you want, a completion or an error.
 
 There are two types of ыubjects in the framework:
 * PassthroughSubject
@@ -106,10 +108,11 @@ Transmits data to subscribers and stores its last state.
 
 # Subscribers
 Combine provides the following subscribers as operators on the Publisher type:
-* ```Rubysink(receiveCompletion:receiveValue:)```
+
+* ```sink(receiveCompletion:receiveValue:)```
 Attaches a subscriber with closure-based behavior.
 
-* ```Rubysink(receiveCompletion:receiveValue:)```
+* ```sink(receiveCompletion:receiveValue:)```
 Assigns each element from a publisher to a property on an object.
 
 Each of these operators returns a subscription to you as an *AnyCancellable* object. You store them as properties or in the set. If at some point you no longer need a subscription, you can call the cancel method on this object.
